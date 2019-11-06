@@ -21,6 +21,8 @@ import java.util.Map;
  * <p>The methods of this class all throw a <tt>NullPointerException</tt>
  * if the json or object provided to them are null.
  *
+ * 依赖fastjson
+ *
  * @Since jdk1.7
  */
 public class ItvJsonUtil {
@@ -44,24 +46,48 @@ public class ItvJsonUtil {
             SerializerFeature.WriteNullStringAsEmpty
     };
 
+    /**
+     * 对象转json
+     * @param object
+     * @return
+     */
     public static String toJson(Object object) {
         return JSON.toJSONString(object, config, features);
     }
 
+    /**
+     * 对象转jsonp
+     * @param object
+     * @return
+     */
     public static String toJsonp(Object object) {
         return  JSONP_PREFIX + JSON.toJSONString(object, config, features) + JSONP_SUFFIX;
     }
 
+    /**
+     * json转对象
+     * @param jsonValue
+     * @param c 类型
+     * @param <T>
+     * @return
+     */
     public static <T> T jsonToObj(String jsonValue, Class<T> c) {
         return StringUtils.isBlank(jsonValue) ? null : JSON.parseObject(jsonValue, c);
     }
+
+    /**
+     * json转List集合
+     * @param json
+     * @param t 集合内元素类型
+     * @param <T>
+     * @return
+     */
     public static <T>List<T> jsonList(String json, T t){
         String decode="";
         if(json!=null&&!json.equals("")){
             try {
                 decode = URLDecoder.decode(json, "utf-8");
             } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             JSONArray fromObject = JSONArray.fromObject(decode);
@@ -72,19 +98,23 @@ public class ItvJsonUtil {
         }
 
     }
+
+    /**
+     * jsonp 转对象
+     * @param jsonpValue
+     * @param c 对象类型
+     * @param <T>
+     * @return
+     */
     public static <T> T jsonpToObj(String jsonpValue, Class<T> c) {
         String rex = "[()]+";
-
-
         if (StringUtils.isBlank(jsonpValue)) {
             return null;
         }
         String[] json = jsonpValue.split(rex);
-
         if (json.length < 1) {
             throw new IllegalArgumentException("The params of 'jsonpValue' is not invalid,pls check.");
         }
-
         return JSON.parseObject(json[1],c);
     }
 

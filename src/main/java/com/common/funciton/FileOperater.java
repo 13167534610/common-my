@@ -36,52 +36,7 @@ public class FileOperater {
     public final static String EN_UTF8 = "UTF-8";
     public final static String EN_GBK = "GBK";
 
-    /**
-     *  获取缓冲输入流
-     * @param absolutely
-     * @param encoding
-     * @return
-     * @throws FileNotFoundException
-     * @throws UnsupportedEncodingException
-     */
-    public static BufferedReader getBufferedReader(String absolutely, String encoding){
-        BufferedReader br = null;
-        File file = new File(absolutely);
-        try {
-            if (file.exists()){
-                FileInputStream fis = new FileInputStream(file);
-                InputStreamReader isr = new InputStreamReader(fis, encoding);
-                br = new BufferedReader(isr);
-            }else {
-                throw new RuntimeException(absolutely + " is not find");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return br;
-    }
 
-    /**
-     *  获取缓冲输出流
-     * @param absolutely
-     * @return
-     * @throws FileNotFoundException
-     */
-    public static BufferedOutputStream getBufferedOutputStream(String absolutely){
-        BufferedOutputStream bos = null;
-        File file = new File(absolutely);
-        try {
-            if (file.exists()){
-                FileOutputStream fos = new FileOutputStream(file);
-                bos = new BufferedOutputStream(fos);
-            }else {
-                throw new RuntimeException(absolutely + " is not find");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return bos;
-    }
 
     /**
      * 关闭资源
@@ -132,15 +87,14 @@ public class FileOperater {
      * @param contents
      */
     public static boolean write2File(String toAbsolutely, List<String> contents){
-        boolean flag = true;
         try {
             File file = checkFileExists(toAbsolutely);
-            flag = write2File(file, contents);
+            if (file == null)return false;
+            return write2File(file, contents);
         }catch (Exception e){
             e.printStackTrace();
-            flag = false;
+            return false;
         }
-        return flag;
     }
 
     /**
@@ -153,6 +107,8 @@ public class FileOperater {
         if (isCreate){
             File file = checkAndCreateFile(toAbsolutely);
             write2File(file, contents);
+        }else {
+            write2File(toAbsolutely, contents);
         }
     }
 
@@ -165,7 +121,7 @@ public class FileOperater {
         boolean flag = true;
         try {
             if (CollectionUtils.isEmpty(contents))throw new RuntimeException("contents is null");
-            if (null == toFile || toFile.exists())throw new RuntimeException("target file is null or is not exists");
+            if (null == toFile || !toFile.exists())throw new RuntimeException("target file is null or is not exists");
             BufferedOutputStream bos = getBufferedOutputStream(toFile.getAbsolutePath());
             String tempLine = null;
             for (int i = 0; i < contents.size(); i++) {
@@ -195,10 +151,11 @@ public class FileOperater {
         File file = new File(absolutely);
         try {
             if (!file.exists())file.createNewFile();
+            return file;
         }catch (IOException e){
+            e.printStackTrace();
             return null;
         }
-        return file;
     }
 
 
@@ -213,8 +170,11 @@ public class FileOperater {
             return null;
         }
         File file = new File(absolutely);
-        if (file.exists())return file;
-        else return null;
+        if (!file.exists()){
+            System.out.println(absolutely + " is not exist");
+            return null;
+        }
+        return file;
     }
 
 
@@ -417,46 +377,98 @@ public class FileOperater {
     }
 
     /**
-     * 文件比较程序
+     * 文件比较程序 比较两个文件是否一样
+     * 方法：验证两个文件的MD5签名
+     * 适用范围 .txt .java l
      * @param filePath1 文件的绝对路径
      * @param filePath2 文件的绝对路径
-     * @return
+     * @return 比较结果 相同返回true
      */
     public static boolean compareProcess(String filePath1, String filePath2){
-        boolean flag = false;
         try {
-            File file = checkFileExists(filePath1);
-            File file1 = checkFileExists(filePath2);
-            if (file == null || file1 == null) System.out.println("传入路径错误，请确认");
+            File file1 = checkFileExists(filePath1);
+            File file2 = checkFileExists(filePath2);
+            if (file1 == null || file2 == null) System.out.println("传入路径错误，请确认");
             FileInputStream fis1= new FileInputStream(filePath1);
             String md5Hex1 = DigestUtils.md5Hex(fis1);
             FileInputStream fis2= new FileInputStream(filePath2);
             String md5Hex2 = DigestUtils.md5Hex(fis2);
-            if (md5Hex1.equals(md5Hex2))flag = true;
+            return md5Hex1.equals(md5Hex2);
         }catch (Exception e){
-            System.out.println(filePath1);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+    /**
+     *  获取缓冲输入流 文件如果不存在，会抛出异常
+     * @param absolutely
+     * @param encoding
+     * @return
+     * @throws FileNotFoundException
+     * @throws UnsupportedEncodingException
+     */
+    private static BufferedReader getBufferedReader(String absolutely, String encoding){
+        BufferedReader br = null;
+        File file = new File(absolutely);
+        try {
+            if (file.exists()){
+                FileInputStream fis = new FileInputStream(file);
+                InputStreamReader isr = new InputStreamReader(fis, encoding);
+                br = new BufferedReader(isr);
+            }else {
+                throw new RuntimeException(absolutely + " is not find");
+            }
+        }catch (Exception e){
             e.printStackTrace();
         }
-        return flag;
+        return br;
     }
+
+    /**
+     *  获取缓冲输出流 同一文件不会覆盖，只会拼接
+     *  文件如果不存在会抛出异常
+     * @param absolutely
+     * @return
+     * @throws FileNotFoundException
+     */
+    private static BufferedOutputStream getBufferedOutputStream(String absolutely){
+        BufferedOutputStream bos = null;
+        File file = new File(absolutely);
+        try {
+            if (file.exists()){
+                FileOutputStream fos = new FileOutputStream(file, true);
+                bos = new BufferedOutputStream(fos);
+            }else {
+                throw new RuntimeException(absolutely + " is not find");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return bos;
+    }
+
+
 
     public static void main(String[] args) throws IOException {
         //文件分割测试
-        /*String filePath = "C:\\Users\\admin\\Desktop\\personal files manage\\git repository\\common\\card.txt";
-        boolean b = fileCut(filePath, 1000, FileOperater.EN_UTF8);
+        String filePath = "C:\\Users\\admin\\Desktop\\personal files manage\\git repository\\common\\card.txt";
+        /*boolean b = fileCut(filePath, 1000, FileOperater.EN_UTF8);
         System.out.println(b);*/
         /*String s = propertiesRead("config.properties", "aliPayAppId");
         System.out.println(s);*/
-
+        File file = new File(filePath);
         //String realPath = getProjectPath();
-        getTomcatPath();
+        //getTomcatPath();
+
 
         //文件比较测试
         /*String resultDir = "D:\\WORK SPACE\\YUM\\百胜交接\\日常处理\\线上代码比较\\20191022";
         String dir1 = "D:\\WORK SPACE\\YUM\\百胜交接\\日常处理\\线上代码比较\\20191022\\162\\CardPlatform";
         String dir2 = "D:\\WORK SPACE\\YUM\\百胜交接\\日常处理\\线上代码比较\\20191022\\local\\CardPlatform";
         compareFile(resultDir, dir1, dir2);*/
-
     }
 
 }

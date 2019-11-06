@@ -1,5 +1,7 @@
 package com.common.funciton;
 
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,6 +41,8 @@ public class DateUtil {
      */
     public static void main(String[] args) throws ParseException {
         System.out.println(dateToStr(new Date(), FORMATE_4));
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("");
+        context.getBean("");
     }
 
     /**

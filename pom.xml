@@ -79,6 +79,18 @@
 			<version>2.4</version>
 			<classifier>jdk15</classifier>
 		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
 		<!--QRcode 二维码-->
 		<dependency>
 			<groupId>com.google.zxing</groupId>

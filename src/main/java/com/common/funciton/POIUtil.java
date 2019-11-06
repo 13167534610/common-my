@@ -19,7 +19,7 @@ import java.util.Map;
  * 模板：一级标题（title0）  二级标题（title1）  数据表（dataRow）
  * 使用方法：二级标题汉化调用setMap<String,String>()方法
  *          调用exportExcel()方法设计导出Excel
- * @author blue sun
+ * @author wangqiang
  */
 public class POIUtil {
 
