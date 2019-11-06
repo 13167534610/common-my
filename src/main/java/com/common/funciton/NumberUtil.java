@@ -16,13 +16,13 @@ import java.text.DecimalFormat;
  */
 public class NumberUtil {
     //百分比格式，保留3位小数
-    private final static String DF_PERCENTAGE = "#.###%";
+    public final static String DF_PERCENTAGE = "#.###%";
     //取整 四舍五入
-    private final static String DF_ROUDING = "#";
+    public final static String DF_ROUDING = "#";
     //取两位小数 四舍五入
-    private final static String DF_POINT_2 = "#.##";
+    public final static String DF_POINT_2 = "#.##";
     //数字取整并分割 每三位一组
-    private final static String DF_DIVISION_3 = ",###";
+    public final static String DF_DIVISION_3 = ",###";
 
     //以下舍入规则 在保留小数点位数内能够除净的情况下取精确值
     //非0进1舍弃（对要求保留小数点位数的后一位若为0舍弃不为0前一位加1）
