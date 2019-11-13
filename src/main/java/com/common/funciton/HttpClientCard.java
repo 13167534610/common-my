@@ -212,7 +212,7 @@ public class HttpClientCard {
 	//
 	// String responseMsg = "";
 	// // 1.构造HttpClient的实例
-	// HttpClient httpClient = new HttpClient();
+	// HttpUtil httpClient = new HttpUtil();
 	// httpClient.getParams().setContentCharset("UTF-8");
 	// // 2.构造PostMethod的实例
 	// PostMethod postMethod = new PostMethod(requrl);
