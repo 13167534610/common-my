@@ -18,8 +18,10 @@ public class SocketUtil {
     public static HashMap<String, String> SocketServer(int port, String encoding){
         HashMap<String, String> result = new HashMap<>();
         try {
+            System.out.println("服务端已启动");
             ServerSocket serverSocket = new ServerSocket(port);
             Socket accept = serverSocket.accept();//线程阻塞等待请求
+            accept.setKeepAlive(true);
             InetAddress inetAddress = accept.getInetAddress();
             InputStream is = accept.getInputStream();
             String s = readMsg(is);
