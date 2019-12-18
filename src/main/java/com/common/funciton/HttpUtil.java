@@ -1,6 +1,7 @@
 package com.common.funciton;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
@@ -8,16 +9,18 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.*;
+import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,9 +41,9 @@ public class HttpUtil {
     private static RequestConfig requestConfig = null;
     static {
          requestConfig = RequestConfig.custom()
-                 .setConnectTimeout(20000)
-                 .setConnectionRequestTimeout(10000)
-                 .setSocketTimeout(10000)
+                 .setConnectTimeout(100000)
+                 .setConnectionRequestTimeout(50000)
+                 .setSocketTimeout(50000)
                  .build();
     }
 
@@ -65,6 +68,8 @@ public class HttpUtil {
 
         String s = "var returnCitySN = {\"cip\": \"222.129.19.10\", \"cid\": \"110000\", \"cname\": \"北京市\"};";
         System.out.println(getIPV4());
+
+        //System.out.println(getIpInfo("222.129.19.10"));
     }
 
     /**
@@ -83,19 +88,7 @@ public class HttpUtil {
         HttpGet get = new HttpGet(url);
         get.setConfig(requestConfig);
         get.addHeader("User-Agent", "ApiSdk Client v0.1");
-        CloseableHttpResponse response = null;
-        try {
-            response = client.execute(get);
-            return readResponseData(response);
-        }catch (Exception e){
-            throw new RuntimeException("请求发送失败");
-        }finally {
-            try {
-                response.close();
-            } catch (IOException e) {
-                throw new RuntimeException("响应关闭失败");
-            }
-        }
+        return execute(client, get);
     }
 
     /**
@@ -104,7 +97,7 @@ public class HttpUtil {
      * @param params
      * @return
      */
-    public static String httpPostDefault(String url, HashMap<String, String> params){
+    public static String httpPostDefault(String url, HashMap<String, String> params) throws UnsupportedEncodingException {
         CloseableHttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost(url);
         post.setConfig(requestConfig);
@@ -116,22 +109,9 @@ public class HttpUtil {
                 nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
             }
         }
-        CloseableHttpResponse response = null;
-        try {
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, ENCODING);
-            post.setEntity(entity);
-            response = client.execute(post);//发送请求获取响应数据
-            return readResponseData(response);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException("请求发送失败");
-        }finally {
-            try {
-                response.close();
-            } catch (IOException e) {
-                throw new RuntimeException("响应关闭失败");
-            }
-        }
+        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nvps, ENCODING);
+        post.setEntity(entity);
+        return execute(client, post);
     }
 
     /**
@@ -151,9 +131,8 @@ public class HttpUtil {
         StringEntity stringEntity = new StringEntity(paramJson, ENCODING);
         stringEntity.setContentType(CONTENT_TYPE);
         stringEntity.setContentEncoding(ENCODING);
-        CloseableHttpResponse response = null;
-        String s = postExecute(client, post, stringEntity, response);
-        return s;
+        post.setEntity(stringEntity);
+        return execute(client, post);
     }
 
     /**
@@ -171,10 +150,41 @@ public class HttpUtil {
         StringEntity stringEntity = new StringEntity(paramJson, ENCODING);
         stringEntity.setContentType(CONTENT_TYPE);
         stringEntity.setContentEncoding(ENCODING);
-        CloseableHttpResponse response = null;
-        String s = postExecute(client, post, stringEntity, response);
-        return s;
+        post.setEntity(stringEntity);
+        return execute(client, post);
     }
+
+    /**
+     * 执行post请求
+     * @param client
+     * @param request
+     * @return
+     */
+    private static String execute(CloseableHttpClient client, HttpRequestBase request){
+        String result = null;
+        CloseableHttpResponse response = null;
+        try {
+            response = client.execute(request);//发送请求获取响应数据
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK){
+                System.out.println("response status is " + statusCode);
+            }else {
+                HttpEntity entity = response.getEntity();
+                result = EntityUtils.toString(entity, "UTF-8");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (response != null)response.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+    }
+
+
 
     /**
      * 根据IP获取地址和运营商信息
@@ -185,8 +195,8 @@ public class HttpUtil {
         HashMap<String, String> map = new HashMap<>();
         map.put("ip", ip);
         String s = HttpUtil.httpGet(IP_CHECK, map);
-        IpCheckResult ipCheckResult = ItvJsonUtil.jsonToObj(s, IpCheckResult.class);
-        if (ipCheckResult != null){
+        if (s != null){
+            IpCheckResult ipCheckResult = ItvJsonUtil.jsonToObj(s, IpCheckResult.class);
             return StringUtils.equals(ipCheckResult.getCode(), "0") ? ipCheckResult.data : null;
         }
         return null;
@@ -212,28 +222,13 @@ public class HttpUtil {
      */
     public static String getIPV4() {
         String s = HttpUtil.httpGet(IP_GET, null);
-        return s.substring(28, s.indexOf(",") -1);
+        if (s != null){
+            return s.substring(28, s.indexOf(",") -1);
+
+        }
+        return null;
     }
 
-    /**
-     * 获取响应数据
-     *
-     * @param response
-     * @return
-     * @throws IOException
-     */
-    private static String readResponseData(CloseableHttpResponse response) throws IOException {
-        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK){
-            System.out.println(response.getStatusLine().getStatusCode());
-            throw new RuntimeException("访问失败");
-        }
-        InputStream inputStream = response.getEntity().getContent();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuffer result = new StringBuffer();
-        String line = "";
-        if ((line = bufferedReader.readLine()) != null)result.append(line);
-        return result.toString();
-    }
 
     /**
      * get请求拼装参数
@@ -266,30 +261,7 @@ public class HttpUtil {
         return str;
     }
 
-    /**
-     * 执行post请求
-     * @param client
-     * @param post
-     * @param stringEntity
-     * @param response
-     * @return
-     */
-    private static String postExecute(CloseableHttpClient client, HttpPost post, StringEntity stringEntity, CloseableHttpResponse response){
-        try {
-            post.setEntity(stringEntity);
-            response = client.execute(post);//发送请求获取响应数据
-            return readResponseData(response);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException("请求发送失败");
-        }finally {
-            try {
-                if (response != null)response.close();
-            } catch (IOException e) {
-                throw new RuntimeException("响应关闭失败");
-            }
-        }
-    }
+
 
 
     static class IpCheckResult{

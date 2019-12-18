@@ -44,9 +44,13 @@ public class NumberUtil {
 
     public static void main(String[] args) {
         //System.out.println(divide((short) 3.89, (short) 2,1, ROUND_HALF_UP));
-        System.out.println(initDecimalFormat(DF_PERCENTAGE).format(0.523965));
+        /*System.out.println(initDecimalFormat(DF_PERCENTAGE).format(0.523965));
 
-        System.out.println(format("3.16", 1));
+        System.out.println(format("3.16", 1));*/
+
+        BigDecimal bigDecimal = new BigDecimal("15.264");
+        double v = bigDecimal.setScale(2, ROUND_HALF_UP).doubleValue();
+        System.out.println(v);
     }
 
     /**

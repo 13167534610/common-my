@@ -20,9 +20,7 @@ public class ImgUtil {
         System.out.println(compareImage(file1, file2));
         //System.out.println(compareImage(file2, file3));
         //System.out.println(compareImage(file1, file3));
-
     }
-
 
     /**
      * 将文件转换成二进制码

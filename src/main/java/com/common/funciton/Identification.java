@@ -55,7 +55,7 @@ public class Identification {
     }
 
     /**
-     * 获取自定义20位唯一标识  yyyyMMddHHmmss + seq + 随机位
+     * 获取自定义唯一标识  yyyyMMddHHmmss + seq + 随机位
      * 适合用作订单号 流水号 针对高并发可提高随机位长度如length = 32 seq=null
      * seq 若为空返回长度为20
      * @return
@@ -91,10 +91,11 @@ public class Identification {
         int randomLen = length - binLen - seqLen - 1;
         String randomNumber = getRandomNumber(randomLen);//获取指定位数的随机数
         StringBuffer cardNoBuffer = new StringBuffer(bin).append(randomNumber).append(seq);
-        String validNum = getValidNum(cardNoBuffer.toString());
+        String validNum = getValidNum(cardNoBuffer.toString());//luhn算法计算校验位
         cardNoBuffer.append(validNum);
         return cardNoBuffer.toString();
     }
+
 
     /**
      * 获取指定位数的随机数字字符串
