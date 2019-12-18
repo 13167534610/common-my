@@ -102,7 +102,7 @@ public class FileOperater {
      * @param toAbsolutely
      * @param contents
      */
-    public static void write2File(String toAbsolutely, List<String> contents, boolean isCreate) throws IOException {
+    public static void write2File(String toAbsolutely, List<String> contents, boolean isCreate){
         if (CollectionUtils.isEmpty(contents))throw new RuntimeException("contents is null");
         if (isCreate){
             File file = checkAndCreateFile(toAbsolutely);
@@ -333,7 +333,7 @@ public class FileOperater {
      * @param compareDir2 参与比较文件或文件夹路径
      * @throws IOException
      */
-    public static void compareFile(String resultDir, String compareDir1, String compareDir2) throws IOException {
+    public static void compareFile(String resultDir, String compareDir1, String compareDir2) {
         HashMap<String, String> map1 = new HashMap<>();
         HashMap<String, String> map2 = new HashMap<>();
         fileErgodic(compareDir1, map1);
@@ -452,7 +452,7 @@ public class FileOperater {
 
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args){
         //文件分割测试
         String filePath = "C:\\Users\\admin\\Desktop\\personal files manage\\git repository\\common\\card.txt";
         /*boolean b = fileCut(filePath, 1000, FileOperater.EN_UTF8);
