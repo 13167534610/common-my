@@ -17,7 +17,7 @@ import java.util.Random;
  */
 public class VerifyCodeUtil {
     //使用到Algerian字体，系统里没有的话需要安装字体，字体只显示大写，去掉了1,0,i,o几个容易混淆的字符
-    public static final String VERIFY_CODES = "23456789ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz";
+    public static final String VERIFY_CODES = "0A1aB2bCc3DdEe4FfGgH5hIiJjK6kLlMmNn7OoPpQqRr8SsTtUuVvW9wXxYyZz";
     private static Random random = new Random();
 
     public static void main(String[] args) throws IOException{
@@ -28,8 +28,8 @@ public class VerifyCodeUtil {
             outputImage(w*verifyCode.length(), h, file, verifyCode);*/
         String generateVerifyCode = generateVerifyCode(6);
         System.out.println(generateVerifyCode);
-        BufferedImage image = getImage(255, 80, generateVerifyCode);
-        ImageIO.write(image, "png", new FileOutputStream(new File("D:\\1.png")));
+        /*BufferedImage image = getImage(255, 80, generateVerifyCode);
+        ImageIO.write(image, "png", new FileOutputStream(new File("D:\\1.png")));*/
     }
  
     /**
