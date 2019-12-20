@@ -23,6 +23,36 @@ public class ImgUtil {
     }
 
     /**
+     * 比较两个文件的相似度
+     * @param imgPath1
+     * @param imgPath2
+     * @return
+     * @throws IOException
+     */
+    public static Result compareImage(File imgPath1, File imgPath2) throws IOException {
+        // 分析图片相似度 begin
+        String[][] list1 = getPX(imgPath1);
+        String[][] list2 = getPX(imgPath2);
+        Result result = new Result();
+        result = culate(list1, list2, result);
+        list1 = getPX(imgPath2);
+        list2 = getPX(imgPath1);
+        result = culate(list1, list2, result);
+        try {
+            if(result.getBusi() == 0){
+                result.setPercentage(NumberUtil.format("1", NumberUtil.DF_PERCENTAGE));
+            }else {
+                String format = NumberUtil.format(NumberUtil.initBigDecimal(result.getXiansi()).divide(NumberUtil.initBigDecimal(result.getSum()), 5, NumberUtil.ROUND_HALF_DOWN).toString(), NumberUtil.DF_PERCENTAGE);
+                result.setPercentage(format);
+            }
+        } catch (Exception e) {
+            result.setPercentage(NumberUtil.format("0", NumberUtil.DF_PERCENTAGE));
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
      * 将文件转换成二进制码
      * @param imageFile
      * @return
@@ -88,35 +118,7 @@ public class ImgUtil {
         return result;
     }
 
-    /**
-     * 比较两个文件的相似度
-     * @param imgPath1
-     * @param imgPath2
-     * @return
-     * @throws IOException
-     */
-    public static Result compareImage(File imgPath1, File imgPath2) throws IOException {
-        // 分析图片相似度 begin
-        String[][] list1 = getPX(imgPath1);
-        String[][] list2 = getPX(imgPath2);
-        Result result = new Result();
-        result = culate(list1, list2, result);
-        list1 = getPX(imgPath2);
-        list2 = getPX(imgPath1);
-        result = culate(list1, list2, result);
-        try {
-            if(result.getBusi() == 0){
-                result.setPercentage(NumberUtil.format("1", NumberUtil.DF_PERCENTAGE));
-            }else {
-                String format = NumberUtil.format(NumberUtil.initBigDecimal(result.getXiansi()).divide(NumberUtil.initBigDecimal(result.getSum()), 5, NumberUtil.ROUND_HALF_DOWN).toString(), NumberUtil.DF_PERCENTAGE);
-                result.setPercentage(format);
-            }
-        } catch (Exception e) {
-            result.setPercentage(NumberUtil.format("0", NumberUtil.DF_PERCENTAGE));
-            e.printStackTrace();
-        }
-        return result;
-    }
+
 
 
 

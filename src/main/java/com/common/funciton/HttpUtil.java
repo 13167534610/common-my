@@ -85,6 +85,7 @@ public class HttpUtil {
                     .append(getEncodeParamStr(params))
                     .toString();
         }
+        System.out.println(url);
         HttpGet get = new HttpGet(url);
         get.setConfig(requestConfig);
         get.addHeader("User-Agent", "ApiSdk Client v0.1");

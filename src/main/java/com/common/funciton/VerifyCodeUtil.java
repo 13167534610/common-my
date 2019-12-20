@@ -97,7 +97,7 @@ public class VerifyCodeUtil {
      * @param code
      * @throws IOException
      */
-    public static void outputImage(int w, int h, File outputFile, String code) throws IOException{
+    public static void outputImage(int w, int h, File outputFile, String code){
         if(outputFile == null){
             return;
         }
@@ -111,7 +111,7 @@ public class VerifyCodeUtil {
             outputImage(w, h, fos, code);
             fos.close();
         } catch(IOException e){
-            throw e;
+            e.printStackTrace();
         }
     }
     public static BufferedImage getImage(int w,int h,String code){
