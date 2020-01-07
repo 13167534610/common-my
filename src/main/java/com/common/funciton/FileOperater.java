@@ -88,27 +88,12 @@ public class FileOperater {
      */
     public static boolean write2File(String toAbsolutely, List<String> contents){
         try {
-            File file = checkFileExists(toAbsolutely);
+            File file = checkAndCreateFile(toAbsolutely);
             if (file == null)return false;
             return write2File(file, contents);
         }catch (Exception e){
             e.printStackTrace();
             return false;
-        }
-    }
-
-    /**
-     * 写文件
-     * @param toAbsolutely
-     * @param contents
-     */
-    public static void write2File(String toAbsolutely, List<String> contents, boolean isCreate){
-        if (CollectionUtils.isEmpty(contents))throw new RuntimeException("contents is null");
-        if (isCreate){
-            File file = checkAndCreateFile(toAbsolutely);
-            write2File(file, contents);
-        }else {
-            write2File(toAbsolutely, contents);
         }
     }
 
@@ -125,8 +110,9 @@ public class FileOperater {
             BufferedOutputStream bos = getBufferedOutputStream(toFile.getAbsolutePath());
             String tempLine = null;
             for (int i = 0; i < contents.size(); i++) {
-                if (i == contents.size() - 1) tempLine = contents.get(i);
-                else tempLine = contents.get(i) + "\n";
+                /*if (i == contents.size() - 1) tempLine = contents.get(i);
+                else tempLine = contents.get(i) + "\n";*/
+                tempLine = contents.get(i) + "\n";
                 bos.write(tempLine.getBytes());
                 bos.flush();
             }
@@ -187,7 +173,6 @@ public class FileOperater {
     public static boolean fileCut(String absolutely, int size, String encoding){
         boolean flag = true;
         try {
-            if (checkFileExists(absolutely) == null)
             if (StringUtils.isBlank(absolutely))throw new RuntimeException("absolutely is null");
             File oriFile = new File(absolutely);
             if (!oriFile.exists())throw new RuntimeException(absolutely + " is not find");
@@ -346,9 +331,9 @@ public class FileOperater {
             else diff.add(entry.getValue());
         }
         if(!CollectionUtils.isEmpty(common))
-            FileOperater.write2File(resultDir + File.separator + "common.txt", common, true);
+            FileOperater.write2File(resultDir + File.separator + "common.txt", common);
         if(!CollectionUtils.isEmpty(diff))
-            FileOperater.write2File(resultDir + File.separator + "diff.txt", diff, true);
+            FileOperater.write2File(resultDir + File.separator + "diff.txt", diff);
     }
 
     /**
