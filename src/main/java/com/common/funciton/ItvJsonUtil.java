@@ -1,11 +1,11 @@
 package com.common.funciton;
 
 import com.alibaba.fastjson.JSON;
-import net.sf.json.JSONArray;
 import com.alibaba.fastjson.serializer.JSONLibDataFormatSerializer;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import org.apache.commons.lang.StringUtils;
+import net.sf.json.JSONArray;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

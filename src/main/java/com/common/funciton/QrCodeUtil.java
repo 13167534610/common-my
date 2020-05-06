@@ -128,7 +128,7 @@ public class QrCodeUtil {
      */
     public static void main(String[] args) throws IOException, WriterException {
         FileOutputStream outputStream = new FileOutputStream(new File("d:\\qrcode.jpg"));
-        BufferedImage qrCode = createQrCode(new File("E:\\personal files manage\\git repository\\icon\\test.jpg"), "hello 这讨厌的猫总是偷吃", 300);
+        BufferedImage qrCode = createQrCode(new File("E:\\personal files manage\\git repository\\icon\\test.jpg"), "otpauth://totp/account1?secret=MHN2UZ5ZGWSLATUY", 300);
         ImageIO.write(qrCode, "JPEG", outputStream);
         outputStream.close();
         //readQrCode(new FileInputStream(new File("d:\\qrcode.jpg")));

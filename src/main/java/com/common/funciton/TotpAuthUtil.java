@@ -162,9 +162,9 @@ public class TotpAuthUtil {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        String secret = TotpAuthUtil.generateSecretKey();
+        //String secret = TotpAuthUtil.generateSecretKey();
+        String secret = "MHN2UZ5ZGWSLATUY";
         System.out.println(secret);
-        //String secret = "OE7T3RGGNTYAQYTY";
         String qrcode = TotpAuthUtil.getQRBarcode("account1", secret);
         System.out.println(qrcode);
 
