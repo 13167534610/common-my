@@ -3,10 +3,7 @@ package com.common.funciton;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.UUID;
 
 /**
@@ -22,21 +19,19 @@ import java.util.UUID;
  */
 public class Identification {
     public static void main(String[] args) {
-        DecimalFormat df = new DecimalFormat("0.00%");
+        /*DecimalFormat df = new DecimalFormat("0.00%");
         HashSet<String> strings = new HashSet<>();
-        //BigDecimal sum = new BigDecimal("0");
-        double sum = 0.00D;
-        int max = 1000000;
+        int max = 100000;
         for (int i = 0; i < max; i++) {
-            String number = getRandomNumber(7);
+            String number = getRandomNumber(6);
             strings.add(number);
             //System.out.println(number);
         }
         System.out.println(df.format(new BigDecimal(max - strings.size()).divide(new BigDecimal(max),5, BigDecimal.ROUND_HALF_UP)));
-        /*System.out.println(sum.add(new BigDecimal("1")).doubleValue());
-        System.out.println(sum.add(new BigDecimal("1")).doubleValue());*/
-
+*/
+        System.out.println(uuidAscii());
     }
+
 
     /**
      * 返回36位带有“-”的字符串
@@ -52,6 +47,20 @@ public class Identification {
      */
     public static String uuid32(){
         return UUID.randomUUID().toString().replaceAll("-", "");
+    }
+
+    /**
+     * uuid的ascii码
+     * @return
+     */
+    public static String uuidAscii(){
+        String s = uuid32();
+        byte[] bytes = s.getBytes();
+        StringBuffer sb = new StringBuffer("");
+        for (byte aByte : bytes) {
+            sb.append(aByte);
+        }
+        return sb.toString();
     }
 
     /**

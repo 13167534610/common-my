@@ -1,0 +1,9 @@
+DateSourceConfig  数据源配置
+MybatisConfig mybatis配置
+MultiDataSourceTransactional 自定义注解
+MultiDataSourceTransactionAspect 自定义事务切面
+
+原理：
+mybatis采用分包区分数据源的方式
+需要多数据源的方法使用MultiDataSourceTransactional标注
+执行之前将涉及到的数据源获取出来放到栈中，执行之后再弹栈提交事务，执行失败数据回滚

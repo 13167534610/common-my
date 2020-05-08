@@ -1,0 +1,11 @@
+spring:
+  datasource-gf:
+    driver-class-name: com.mysql.jdbc.Driver
+    jdbc-url: jdbc:mysql://localhost:3306/auth_center?useUnicode=true&characterEncoding=UTF-8&useSSL=false&&serverTimezone=UTC
+    username: root
+    password: root
+  datasource-xsh:
+    driver-class-name: com.mysql.jdbc.Driver
+    jdbc-url: jdbc:mysql://localhost:3306/xiaotianxian?useUnicode=true&characterEncoding=UTF-8&useSSL=false&&serverTimezone=UTC
+    username: root
+    password: root
