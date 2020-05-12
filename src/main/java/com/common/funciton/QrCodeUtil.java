@@ -13,7 +13,7 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -105,7 +105,7 @@ public class QrCodeUtil {
     /**
      * 读二维码并输出携带的信息
      */
-    public static void readQrCode(InputStream inputStream) throws IOException {
+    public static Result readQrCode(InputStream inputStream) throws IOException {
         //从输入流中获取字符串信息
         BufferedImage image = ImageIO.read(inputStream);
         //将图像转换为二进制位图源
@@ -117,8 +117,9 @@ public class QrCodeUtil {
             result = reader.decode(bitmap);
         } catch (ReaderException e) {
             e.printStackTrace();
+        }finally {
+            return result;
         }
-        System.out.println(result.getText());
     }
 
     /**
@@ -127,11 +128,12 @@ public class QrCodeUtil {
      * @throws WriterException
      */
     public static void main(String[] args) throws IOException, WriterException {
-        FileOutputStream outputStream = new FileOutputStream(new File("d:\\qrcode.jpg"));
+        /*FileOutputStream outputStream = new FileOutputStream(new File("d:\\qrcode.jpg"));
         BufferedImage qrCode = createQrCode(new File("E:\\personal files manage\\git repository\\icon\\test.jpg"), "otpauth://totp/account1?secret=MHN2UZ5ZGWSLATUY", 300);
         ImageIO.write(qrCode, "JPEG", outputStream);
-        outputStream.close();
-        //readQrCode(new FileInputStream(new File("d:\\qrcode.jpg")));
+        outputStream.close();*/
+        Result result = readQrCode(new FileInputStream(new File("E:\\personal files manage\\git repository\\imgs\\qrcode.png")));
+        System.out.println(result.getText());
         //下方为浏览器请求方式
         /*ServletOutputStream outputStream = response.getOutputStream();
         String content = "www.baidu.com";

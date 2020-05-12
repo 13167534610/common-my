@@ -29,7 +29,6 @@ public class Identification {
         }
         System.out.println(df.format(new BigDecimal(max - strings.size()).divide(new BigDecimal(max),5, BigDecimal.ROUND_HALF_UP)));
 */
-        System.out.println(uuidAscii());
     }
 
 
@@ -49,19 +48,7 @@ public class Identification {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-    /**
-     * uuid的ascii码
-     * @return
-     */
-    public static String uuidAscii(){
-        String s = uuid32();
-        byte[] bytes = s.getBytes();
-        StringBuffer sb = new StringBuffer("");
-        for (byte aByte : bytes) {
-            sb.append(aByte);
-        }
-        return sb.toString();
-    }
+
 
     /**
      * 获取自定义唯一标识  yyyyMMddHHmmss + seq + 随机位

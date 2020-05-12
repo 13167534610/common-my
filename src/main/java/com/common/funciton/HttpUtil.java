@@ -41,9 +41,9 @@ public class HttpUtil {
     private static RequestConfig requestConfig = null;
     static {
          requestConfig = RequestConfig.custom()
-                 .setConnectTimeout(100000)
-                 .setConnectionRequestTimeout(50000)
-                 .setSocketTimeout(50000)
+                 .setConnectTimeout(100000) //连接超时时间
+                 .setConnectionRequestTimeout(50000) //请求超时时间
+                 .setSocketTimeout(50000) //socket超时时间
                  .build();
     }
 

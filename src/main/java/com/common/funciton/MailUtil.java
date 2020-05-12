@@ -23,13 +23,13 @@ import java.util.Properties;
  */
 public class MailUtil {
     //本地测试
-    public static final String smtpHost = "10.6.4.78";
+    public static final String smtpHost = "";
     //发件人地址
-    public static final String from = "system_monitor@zihexin.com";
+    public static final String from = "";
     //邮箱账户
-    public static final String name = "system_monitor@zihexin.com";
+    public static final String name = "";
     //邮箱密码
-    public static final String password = "000000";
+    public static final String password = "";
 
     private static JavaMailSenderImpl mailSender;
     static {
@@ -45,8 +45,8 @@ public class MailUtil {
     }
     public static void main(String[] args) {
         ArrayList<String> list = new ArrayList<>();
-        list.add("wangqiang@zihexin.com");
-        list.add("13167534610@163.com");
+        list.add("");
+        list.add("");
         HashMap<String, InputStreamSource> map = new HashMap<>();
         ByteArrayResource resource1 = new ByteArrayResource("test1\nthis is test1".getBytes());
         ByteArrayResource resource2 = new ByteArrayResource("test2\nthis is test1".getBytes());
