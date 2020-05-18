@@ -29,6 +29,8 @@ public class Identification {
         }
         System.out.println(df.format(new BigDecimal(max - strings.size()).divide(new BigDecimal(max),5, BigDecimal.ROUND_HALF_UP)));
 */
+
+        System.out.println(luhnNumberId(20, "731018", "123456"));
     }
 
 

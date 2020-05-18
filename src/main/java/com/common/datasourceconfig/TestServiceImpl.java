@@ -1,6 +1,6 @@
-package com.common.dataconfig;
+package com.common.datasourceconfig;
 
-import com.common.dataconfig.annotation.MultiDataSourceTransactional;
+import com.common.datasourceconfig.annotation.MultiDataSourceTransactional;
 import org.springframework.stereotype.Service;
 
 /**

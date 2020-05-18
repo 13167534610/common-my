@@ -82,25 +82,6 @@ public class ThreeDES {
         return hs.toUpperCase();
     }
 
-    public static void main(String[] args)
-    {
-        //添加新安全算法,如果用JCE就要把它添加进去
-//        Security.addProvider(new com.sun.crypto.provider.SunJCE());
-//
-//
-//        String szSrc = "xq_7830000000001073921";
-//        System.out.println("加密前的字符串:" + szSrc);
-//
-//        byte[] encoded = encryptMode(szSrc.getBytes());
-//        System.out.println("加密后的字符串:" + byte2Base64(encoded));
-//
-        String aa="30c30xb9BZXL4tVmskacnCyY9dQlE5dk";
-        byte[] bb= Base64.decode(aa);
-
-        byte[] srcBytes = decryptMode(bb);
-        System.out.println("解密后的字符串:" + new String(srcBytes));
-    }
-
     /**
      * 转换成base64编码
      *

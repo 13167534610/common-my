@@ -1,6 +1,6 @@
-package com.common.dataconfig.aop;
+package com.common.datasourceconfig.aop;
 
-import com.common.dataconfig.annotation.MultiDataSourceTransactional;
+import com.common.datasourceconfig.annotation.MultiDataSourceTransactional;
 import javafx.util.Pair;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;

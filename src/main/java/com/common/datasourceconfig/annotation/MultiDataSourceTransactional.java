@@ -1,4 +1,4 @@
-package com.common.dataconfig.annotation;
+package com.common.datasourceconfig.annotation;
 
 import java.lang.annotation.*;
 
