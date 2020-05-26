@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+</head>
+<body>
+
+    <br/>
+    <input id="zipPath" placeholder="输入URL编码后的压缩文件或文件夹路径" onblur="zip()" style="width: 300px"/>
+    <a id="zip" href="#">文件压缩测试</a>
+
+    <hr/>
+    <br/>
+
+    <img id="imgCode" src="http://localhost:8080/getImgValidCode?random=123456789" style="width: 260px; height: 50px">
+    <button onclick="changeImgCode()">更新图片验证码</button>
+
+    <hr/>
+    <br/>
+
+    <input id="excel_title" placeholder="输入excel标题" onblur="exportExcel()" style="width: 300px"/>
+    <a id="exportExcel" href="#">导出excel数据</a>
+
+    <hr/>
+    <br/>
+
+
+    <div style="float: left;">
+        <div>账户绑定密钥：MHN2UZ5ZGWSLATUY</div>
+        <span style="width: 200px;">动态密码的账户: account1</span><br><br>
+        <img id="totpAuth" src="http://localhost:8080/getTotpAuth" style="width: 200px; height: 50px"><br/><br>
+        <button id="freshTotp" onclick="freshTotp()"> 刷新动态密码显示</button>
+    </div>
+    <img src="http://localhost:8080/getQrCode" style="width: 200px; height: 200px; margin-left: 10px">
+    <hr/>
+    <br/>
+
+</body>
+
+<script>
+    $(function () {
+        console.log("zipPath 初始值" + $("#zipPath").val())
+        console.log("excel_title 初始值" + $("#excel_title").val())
+    });
+    function zip() {
+        var zipPath = $("#zipPath").val();
+        console.log(zipPath);
+        $("#zip").attr('href', 'http://localhost:8080/zip?sourcePath=' + zipPath);
+    }
+
+    function changeImgCode() {
+        var timestamp = "" + Date.parse(new Date());
+        console.log(timestamp);
+        $("#imgCode").attr('src', 'http://localhost:8080/getImgValidCode?random=' + timestamp);
+    }
+
+    function exportExcel() {
+        var title = $("#excel_title").val();
+        console.log(title);
+        $("#exportExcel").attr('href', 'http://localhost:8080/exportExcel?title=' + title);
+    }
+
+    function freshTotp() {
+        console.log("刷新动态密码")
+        var timestamp = "" + Date.parse(new Date());
+        console.log(timestamp);
+        $("#totpAuth").attr('src', 'http://localhost:8080/getTotpAuth?random=' + timestamp);
+    }
+</script>
+</html>

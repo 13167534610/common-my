@@ -108,9 +108,9 @@ public class TotpAuthUtil {
 
     /**
      * 验证口令是否正确
-     * @param secret
-     * @param code
-     * @param timeMsec
+     * @param secret 账户密钥
+     * @param code 动态密码
+     * @param timeMsec 系统时间
      * @return
      */
     public static boolean check_code(String secret, long code, long timeMsec) {
@@ -164,9 +164,9 @@ public class TotpAuthUtil {
     public static void main(String[] args) throws InterruptedException {
         //String secret = TotpAuthUtil.generateSecretKey();
         String secret = "MHN2UZ5ZGWSLATUY";
-        System.out.println(secret);
+        /*System.out.println(secret);
         String qrcode = TotpAuthUtil.getQRBarcode("account1", secret);
-        System.out.println(qrcode);
+        System.out.println(qrcode);*/
 
         //测试密码是否正确
         //System.out.println(check_code(secret, 420210, System.currentTimeMillis()));

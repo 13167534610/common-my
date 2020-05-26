@@ -3,16 +3,17 @@ package com.common.funciton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 本工具类是一个通用的Excel导出工具类
@@ -26,16 +27,16 @@ public class POIUtil {
     private static final short FONTSIZE_0=18; //大标题字号
     private static final short FONTSIZE_1=14; //一级标题字号
     private static final short FONTSIZE_2=10; //数据行字号
-    private static final int COLUMN_START=0;
-    private static final int COLUMN_TITLE0=0;
-    private static final int COLUMN_WIDTH=12;
-    private static final int ROW_START=0;
-    private static final int ROW_END=1;
-    private static final int ROWNUM_TITLE0=0;
-    private static final int ROWNUM_TITLE1=2;
-    private static final int FIELD_SUB_START=0;
-    private static final int FIELD_SUB_END=1;
-    private static final int DATAROW_ADD=3;
+    private static final int COLUMN_START=0; //合并区域开始列
+    private static final int COLUMN_TITLE0=0; //标题开始列
+    private static final int COLUMN_WIDTH=12; //列宽
+    private static final int ROW_START=0; //合并区域开始行
+    private static final int ROW_END=1; //合并区域结束行
+    private static final int ROWNUM_TITLE0=0; //标题开始行
+    private static final int ROWNUM_TITLE1=2; //二级标题开始行
+    private static final int FIELD_SUB_START=0; //属性截取开始
+    private static final int FIELD_SUB_END=1; //属性截取结束
+    private static final int DATAROW_ADD=3; //数据开始行
     public final static String RESPONSE_CONTENT_TYPE = "application/msexcel";
     public final static String SUFFix = ".xls";
 
@@ -45,16 +46,18 @@ public class POIUtil {
      * @param args
      */
     public static void main(String[] args) throws IOException {
-//        List<People> peoples=new ArrayList<People>();
-//        peoples.add(new People("LF","男"));
-//        peoples.add(new People("WYH","女"));
-//        peoples.add(new People("WQ", "男"));
-//        HashMap<String, String> map = new HashMap<String, String>();
-//        map.put("name","姓名");
-//        map.put("sex","性别");
-//        HSSFWorkbook workbook = new HSSFWorkbook();
-//        Workbook workbook1 = POIUtil.exportExcel(workbook, peoples, "非浏览器测试", People.class, map);
-//        workbook1.write(getOutputStreamByAbsolutely("C:\\Users\\admin\\Documents\\WeChat Files\\A17839227646\\FileStorage\\File\\2019-06\\excetest.xls"));
+
+
+        List<People> peoples=new ArrayList<People>();
+        peoples.add(new People("LF","男"));
+        peoples.add(new People("WYH","女"));
+        peoples.add(new People("WQ", "男"));
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("name","姓名");
+        map.put("sex","性别");
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        Workbook workbook1 = POIUtil.exportExcel(workbook, peoples, "非浏览器测试", People.class, map);
+        //workbook1.write(getOutputStreamByAbsolutely("C:\\Users\\admin\\Documents\\WeChat Files\\A17839227646\\FileStorage\\File\\2019-06\\excetest.xls"));
         // TODO: 2019/6/18 下面为使用HttpServletResponse通过浏览器下载文件的设置方式
 
         ResponseFields fields = getResponseFields("nest");
@@ -62,13 +65,13 @@ public class POIUtil {
         String contentType = fields.getContentType();
         String name = headerFields.getName();
         String value = headerFields.getValue();
-        /*output = response.getOutputStream();
+
+        HttpServletResponse response = null;
+        ServletOutputStream output = response.getOutputStream();
         response.reset();
         response.setHeader(name, value);
-        response.setContentType(contentType);*/
-        System.out.println(contentType);
-        System.out.println(name);
-        System.out.println(value);
+        response.setContentType(contentType);
+        workbook1.write(output);
     }
 
 
@@ -222,6 +225,11 @@ public class POIUtil {
         return fos;
     }
 
+    /**
+     * 获取响应属性
+     * @param title
+     * @return
+     */
     public static ResponseFields getResponseFields(String title) {
         ResponseFields responseFields = null;
         try {
@@ -320,7 +328,7 @@ public class POIUtil {
     /**
      * 测试内部类
      */
-    static class People{
+    public static class People{
         private String name;
 
         private String sex;

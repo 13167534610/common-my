@@ -47,9 +47,10 @@ public class MultiDataSourceTransactionAspect {
     }
 
     /**
-     * 切面
+     * 切面设置，
      */
-    @Pointcut("@annotation(com.zhx.annotation.MultiDataSourceTransactional)")
+    // TODO: 2020/5/26  @annotation中的内容需要手动修改为注解所在路径
+    @Pointcut(value = "@annotation(com.common.datasourceconfig.annotation.MultiDataSourceTransactional)")
     public void pointcut() {
     }
 
@@ -58,7 +59,7 @@ public class MultiDataSourceTransactionAspect {
      *
      * @param transactional 注解
      */
-    @Before("pointcut() && @annotation(transactional)")
+    @Before(value = "pointcut() && @annotation(transactional)")
     public void before(MultiDataSourceTransactional transactional) {
         // 根据设置的事务名称按顺序声明，并放到ThreadLocal里
         String[] transactionManagerNames = transactional.transactionManagers();
