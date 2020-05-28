@@ -85,7 +85,7 @@ public class POIUtil {
      * @param map 字段汉化器
      * @return workbook  使用workbook.write(OutPutStream)写出
      */
-    public static Workbook exportExcel(Workbook workbook, List objs, String title, Class clazz, Map<String,String> map){
+    public static Workbook exportExcel(Workbook workbook, List objs, String title, Class clazz, Map<String, String> map){
         try {
             if (StringUtils.isEmpty(title))
                 title = "newFile";
@@ -98,20 +98,22 @@ public class POIUtil {
             //创建一级标题
             Row title0 = sheet.createRow(ROWNUM_TITLE0);//开始行
             Cell cell = title0.createCell(COLUMN_TITLE0);//开始列
-            cell.setCellStyle(getCellStyle(workbook,FONTSIZE_0));//设置样式
+
+            CellStyle cellStyle = workbook.createCellStyle();
+            cell.setCellStyle(getCellStyle(workbook, FONTSIZE_0, cellStyle));//设置样式
             cell.setCellValue(title);//设置一级标题名
             //创建二级标题
             Row title1 = sheet.createRow(ROWNUM_TITLE1);//从哪一行开始
             if (null == map || map.isEmpty()) {//不需要标题汉化
                 for (int i = 0; i < fields.length; i++) {
                     Cell colCell = title1.createCell(i);//循环创建列
-                    colCell.setCellStyle(getCellStyle(workbook,FONTSIZE_1));//设置样式
+                    colCell.setCellStyle(getCellStyle(workbook,FONTSIZE_1, cellStyle));//设置样式
                     colCell.setCellValue(fields[i].getName());//设置值
                 }
             }else {//需要标题汉化
                 for (int i = 0; i < fields.length; i++) {
                     Cell colCell = title1.createCell(i);
-                    colCell.setCellStyle(getCellStyle(workbook,FONTSIZE_1));
+                    colCell.setCellStyle(getCellStyle(workbook,FONTSIZE_1, cellStyle));
                     colCell.setCellValue(map.get(fields[i].getName()));
                 }
             }
@@ -132,7 +134,7 @@ public class POIUtil {
                     //执行方法  参数一:执行那个对象中的方法    参数二:该方法的参数
                     Object value = getMethod.invoke(objs.get(i), new Object[]{});
                     //设置单元格显示格式控件
-                    judgeAndSetValue(workbook, value, dataCell);
+                    judgeAndSetValue(workbook, value, dataCell, cellStyle);
                 }
             }
             return workbook;
@@ -148,8 +150,7 @@ public class POIUtil {
      * @param fontSize：字号
      * font.setFontName("");：设置字体类型，如：宋体
      */
-    private static CellStyle getCellStyle(Workbook workbook,short fontSize){
-        CellStyle cellStyle = workbook.createCellStyle();
+    private static CellStyle getCellStyle(Workbook workbook,short fontSize, CellStyle cellStyle){
         cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);//居中对齐
         Font font = workbook.createFont();
         if (fontSize == FONTSIZE_0 || fontSize == FONTSIZE_1)
@@ -166,38 +167,38 @@ public class POIUtil {
      * @param value：通过get方法获取的值
      * @param dataCell：数据单元格
      */
-    private static void judgeAndSetValue(Workbook workbook, Object value, Cell dataCell){
+    private static void judgeAndSetValue(Workbook workbook, Object value, Cell dataCell, CellStyle cellStyle){
         DataFormat df = workbook.createDataFormat();//数据格式对象
         if (value instanceof Integer){//整数类型
-            CellStyle cellStyle = getCellStyle(workbook, FONTSIZE_2);
+            cellStyle = getCellStyle(workbook, FONTSIZE_2, cellStyle);
             dataCell.setCellStyle(cellStyle);
             dataCell.setCellValue((Integer)value);
         }
         if (value instanceof Long){//长整数类型
-            CellStyle cellStyle = getCellStyle(workbook, FONTSIZE_2);
+            cellStyle = getCellStyle(workbook, FONTSIZE_2, cellStyle);
             dataCell.setCellStyle(cellStyle);
             dataCell.setCellValue((Long)value);
         }
         if (value instanceof Double){//双精度小数类型
-            CellStyle cellStyle = getCellStyle(workbook, FONTSIZE_2);
+            cellStyle = getCellStyle(workbook, FONTSIZE_2, cellStyle);
             cellStyle.setDataFormat(df.getFormat("#,#0.00"));
             dataCell.setCellStyle(cellStyle);
             dataCell.setCellValue((Double)value);
         }
         if (value instanceof Float){//单精度小数类型
-            CellStyle cellStyle = getCellStyle(workbook, FONTSIZE_2);
+            cellStyle = getCellStyle(workbook, FONTSIZE_2, cellStyle);
             cellStyle.setDataFormat(df.getFormat("#,#0.0"));
             dataCell.setCellStyle(cellStyle);
             dataCell.setCellValue((Float)value);
         }
         if (value instanceof Date){//日期类型
-            CellStyle cellStyle = getCellStyle(workbook, FONTSIZE_2);
+            cellStyle = getCellStyle(workbook, FONTSIZE_2, cellStyle);
             cellStyle.setDataFormat(df.getFormat("yyyy/MM/dd"));
             dataCell.setCellStyle(cellStyle);
             dataCell.setCellValue((Date)value);
         }
         if(value instanceof String){//字符串类型
-            CellStyle cellStyle = getCellStyle(workbook, FONTSIZE_2);
+            cellStyle = getCellStyle(workbook, FONTSIZE_2, cellStyle);
             dataCell.setCellStyle(cellStyle);
             dataCell.setCellValue((String)value);
         }
