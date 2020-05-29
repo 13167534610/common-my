@@ -6,6 +6,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -78,5 +79,20 @@ public class TestController {
         long code = TotpAuthUtil.getCode(pwd, System.currentTimeMillis());
         ServletOutputStream os = response.getOutputStream();
         VerifyCodeUtil.outputImage(200, 50, os, "" + code);
+    }
+
+
+    @RequestMapping("/getCache")
+    @ResponseBody
+    public String getCache(){
+        String name = SysCacheUtil.getCachValue("name", String.class);
+        return name;
+    }
+
+    @RequestMapping("/setCache")
+    public String setCache(String name){
+        System.out.println("设置缓存");
+        SysCacheUtil.setCache("name", name);
+        return "redirect:/getCache";
     }
 }

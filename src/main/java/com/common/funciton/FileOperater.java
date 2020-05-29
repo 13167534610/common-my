@@ -64,21 +64,39 @@ public class FileOperater {
      * @throws IOException
      */
     public static List<String> getFileContents(String absolutely, String encoding){
+        File file = checkFileExists(absolutely);
+        if (file == null)return null;
+        return getFileContents(file, encoding);
+    }
+
+    /**
+     * 读取文件内容
+     * @param file
+     * @param encoding
+     * @return
+     */
+    public static List<String> getFileContents(File file, String encoding){
         ArrayList<String> result = null;
+        if (file.isDirectory()) System.out.println("给定文件为文件夹");
+        if (file == null || !file.exists()) System.out.println("给定文件不存在");
+        result = new ArrayList<>();
+        BufferedReader br = getBufferedReader(file, encoding);
+        if (br == null) return null;
+        String tempLine = null;
         try {
-            if (!StringUtils.isBlank(absolutely)){
-                result = new ArrayList<>();
-                BufferedReader br = getBufferedReader(absolutely, encoding);
-                String tempLine = null;
-                while ((tempLine = br.readLine())!= null){
-                    result.add(tempLine);
-                }
-                release(br, null, null);
+            while ((tempLine = br.readLine())!= null){
+                result.add(tempLine);
             }
         }catch (Exception e){
             e.printStackTrace();
+        }finally {
+            try {
+                if (br != null)br.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+            return result;
         }
-        return result;
     }
 
     /**
@@ -104,22 +122,27 @@ public class FileOperater {
      */
     public static boolean write2File(File toFile, List<String> contents){
         boolean flag = true;
+        BufferedOutputStream bos = null;
         try {
             if (CollectionUtils.isEmpty(contents))throw new RuntimeException("contents is null");
             if (null == toFile || !toFile.exists())throw new RuntimeException("target file is null or is not exists");
-            BufferedOutputStream bos = getBufferedOutputStream(toFile.getAbsolutePath());
+            bos = getBufferedOutputStream(toFile.getAbsolutePath());
             String tempLine = null;
             for (int i = 0; i < contents.size(); i++) {
-                /*if (i == contents.size() - 1) tempLine = contents.get(i);
-                else tempLine = contents.get(i) + "\n";*/
-                tempLine = contents.get(i) + "\n";
+                if (i == contents.size() - 1) tempLine = contents.get(i);
+                else tempLine = contents.get(i) + "\n";
                 bos.write(tempLine.getBytes());
                 bos.flush();
             }
-            flag = release(null, bos, null);
         }catch (Exception e){
             e.printStackTrace();
             flag = false;
+        }finally {
+            try {
+                if (bos != null)bos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return flag;
     }
@@ -310,7 +333,6 @@ public class FileOperater {
         }
     }
 
-
     /**
      * 比较两个文件或两个文件夹是否相同
      * @param resultDir 比较结果存储路径
@@ -347,11 +369,11 @@ public class FileOperater {
             if (file.isDirectory()) {
                 File[] files = file.listFiles();
                 for (File file1 : files) {
-                    if (!file1.isDirectory()){
+                    if (file1.isDirectory()){
+                        fileErgodic(file1.getAbsolutePath(), map);
+                    }else {
                         Matcher matcher = Pattern.compile(fileNameReg).matcher(file1.getName());
                         if (matcher.find())map.put(file1.getName(), file1.getAbsolutePath());
-                    }else {
-                        fileErgodic(file1.getAbsolutePath(), map);
                     }
                 }
             }else {
@@ -364,27 +386,53 @@ public class FileOperater {
     /**
      * 文件比较程序 比较两个文件是否一样
      * 方法：验证两个文件的MD5签名
-     * 适用范围 .txt .java l
+     * 适用范围 文件类型
      * @param filePath1 文件的绝对路径
      * @param filePath2 文件的绝对路径
      * @return 比较结果 相同返回true
      */
     public static boolean compareProcess(String filePath1, String filePath2){
+        File file1 = checkFileExists(filePath1);
+        File file2 = checkFileExists(filePath2);
+        return compareProcess(file1, file2);
+    }
+
+    /**
+     * 文件比较程序 比较两个文件是否一样
+     * 方法：验证两个文件的MD5签名
+     * 适用范围 文件类型
+     * @param file1
+     * @param file2
+     * @return
+     */
+    public static boolean compareProcess(File file1, File file2){
+        if (file1 == null || file2 == null) {
+            System.out.println("传入文件不存在，请确认");
+            return false;
+        }
+        FileInputStream fis1 = null;
+        FileInputStream fis2 = null;
         try {
-            File file1 = checkFileExists(filePath1);
-            File file2 = checkFileExists(filePath2);
-            if (file1 == null || file2 == null) System.out.println("传入路径错误，请确认");
-            FileInputStream fis1= new FileInputStream(filePath1);
+            fis1 = new FileInputStream(file1);
             String md5Hex1 = DigestUtils.md5Hex(fis1);
-            FileInputStream fis2= new FileInputStream(filePath2);
+            fis2 = new FileInputStream(file2);
             String md5Hex2 = DigestUtils.md5Hex(fis2);
             return md5Hex1.equals(md5Hex2);
         }catch (Exception e){
             e.printStackTrace();
             return false;
-        }
-    }
+        }finally {
+            try {
+                if (fis1 != null) fis1.close();
+                if (fis2 != null) fis2.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
+        }
+
+
+    }
 
 
     /**
@@ -396,15 +444,30 @@ public class FileOperater {
      * @throws UnsupportedEncodingException
      */
     private static BufferedReader getBufferedReader(String absolutely, String encoding){
-        BufferedReader br = null;
         File file = new File(absolutely);
+        return getBufferedReader(file, encoding);
+    }
+
+
+    /**
+     *  获取缓冲输入流 文件如果不存在，会抛出异常
+     * @param file
+     * @param encoding
+     * @return
+     * @throws FileNotFoundException
+     * @throws UnsupportedEncodingException
+     */
+    private static BufferedReader getBufferedReader(File file, String encoding){
+        BufferedReader br = null;
         try {
             if (file.exists()){
                 FileInputStream fis = new FileInputStream(file);
-                InputStreamReader isr = new InputStreamReader(fis, encoding);
+                InputStreamReader isr = null;
+                if (StringUtils.isNotBlank(encoding)) isr = new InputStreamReader(fis, encoding);
+                else isr = new InputStreamReader(fis);
                 br = new BufferedReader(isr);
             }else {
-                throw new RuntimeException(absolutely + " is not find");
+                throw new RuntimeException(file.getName() + " is not find");
             }
         }catch (Exception e){
             e.printStackTrace();

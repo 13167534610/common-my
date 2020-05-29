@@ -11,4 +11,11 @@ public class Banana extends Fruit{
     public void printName(){
         System.out.println(name);
     }
+
+    @Override
+    public String toString() {
+        return "Banana{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }
