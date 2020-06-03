@@ -1,8 +1,9 @@
 package com.common.funciton.aqmp;
 
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * @Description:
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitAdminProvider {
 
-    @Autowired
-    private RabbitAdmin rabbitAdmin;
+    @Resource(name = "myRabbitAdmin")
+    private RabbitAdmin myRabbitAdmin;
 
     public void sendMsg(){
 

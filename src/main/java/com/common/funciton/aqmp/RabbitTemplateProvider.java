@@ -1,11 +1,16 @@
 package com.common.funciton.aqmp;
 
+import com.common.funciton.ItvJsonUtil;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
+import java.util.UUID;
 
 /**
  * @Description:
@@ -16,17 +21,20 @@ import javax.servlet.ServletOutputStream;
 @Component
 public class RabbitTemplateProvider {
 
-    @Resource(name = "rabbitTemplate")
-    private RabbitTemplate rabbitTemplate;
 
 
-    public void sendMsg(String exchange, String queue, Object obj, CorrelationData correlationData){
-        String str = "简单队列测试";
-        System.out.println(str);
-        rabbitTemplate.convertAndSend(exchange, queue, obj, correlationData);
-        System.out.println("exchange: " + rabbitTemplate.getExchange());
 
+    public void sendMsg(RabbitTemplate rabbitTemplate, String exchange, String routKey, Object obj){
+        MessageConverter messageConverter = rabbitTemplate.getMessageConverter();
+        MessageProperties properties = new MessageProperties();
+        properties.setAppId("myRabbitTemplate");
+        properties.setClusterId("myRabbitTemplate");
+        Message message = messageConverter.toMessage(obj, properties);
 
+        CorrelationData correlationData = new CorrelationData();
+        correlationData.setId(UUID.randomUUID().toString());
+        rabbitTemplate.convertAndSend(exchange, routKey, message, correlationData);
     }
+
 
 }

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+	<header>
+		<script src="../js/jquery.min.js"></script>
+		<link rel="stylesheet" href="../css/shortui.css">
+	</header>
+	<style>
+		#main-msg{
+			margin-right: 10px;
+			width: 300px;
+			height: 700px;
+			right: 10px;
+		}
+		.main-header{
+			border: 1px solid seashell;
+			background-image: url("../img/bg_1.png");
+			background-repeat: no-repeat;
+			background-size: 100% 100%;
+			opacity: 0.5;
+			width: 298px;
+			height: 100px;
+		}
+		.my-star{
+			float: left;
+			border: 1px solid gray;
+			background-image: url("../img/Taget_48.png");
+			background-repeat: no-repeat;
+			background-size: 100% 100%;
+			width: 60px;
+			height: 60px;
+			border-radius: 50%;
+			margin-top: 30px;
+		}
+		.my-mssage{
+			float: left;
+			border: 0px solid gray;
+			text-decoration: underline;
+			width: 224px;
+			height: 60px;
+			margin-top: 30px;
+			margin-left: 10px;
+		}
+		.main-bar{
+			border-top: 1px solid grey;
+			border-bottom: 1px solid grey;
+			width: 298px;
+			height: 32px;
+		}
+		.shortui-list-bar li{
+			width: 87px;
+			text-align: center;
+			font-size: 1em;
+			margin-left: 8px;
+			border-right: 1px dotted grey;
+		}
+		.shortui-list-bar li a{
+			text-decoration: none;
+			color: gray;
+		}
+		.shortui-list-bar li a:hover{
+			color: black;
+		}
+		#talk-view{
+			border: 1px solid gainsboro;
+			display: none;
+			width: 800px;
+			height: 600px;
+		}
+		.list-relation{
+			list-style: none;
+		}
+	</style>
+	<body style="background: gainsboro">
+		<div id="main-msg" class="shortui-drag" drag-area-width="300" drag-area-height="100">
+			<div class="main-header">
+				<div class="my-star">
+				</div>
+				<div class="my-mssage">
+					<span class="my-nickname" id="my-nickname">薛定谔的猫</span>
+					<input type="hidden" id="my-uid" value="${}">
+				</div>
+			</div>
+			<div class="main-bar">
+				<ul class="shortui-list-bar">
+					<li><a id="my-friends" href="#" class="shortui-linka-1"><strong>好友列表</strong></a></li>
+					<li><a id="my-groups" href="#" class="shortui-linka-1"><strong>群列表</strong></a></li>
+					<li><a id="my-add" href="#" class="shortui-linka-1"><strong>添加</strong></a></li>
+				</ul>
+			</div>
+			<div class="main-content">
+				<div class="main-friends" id="main-friends">
+					<ul class="friends">
+						<li onclick="showView('3', 'you1')" class="list-relation" id="you1">you1</li>
+						<li onclick="showView('3', 'you2')" class="list-relation" id="you2">you2</li>
+						<li onclick="showView('3', 'you3')" class="list-relation" id="you3">you3</li>
+					</ul>
+				</div>
+
+				<div class="main-groups" id="main-groups" style="display: none">
+					<ul class="groups">
+						<li onclick="showView('4', 'group1')" class="list-relation" id="group1">group1</li>
+						<li onclick="showView('4', 'group2')" class="list-relation" id="group2">group2</li>
+						<li onclick="showView('4', 'group3')" class="list-relation" id="group3">group3</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="talk-view" class="shortui-drag" drag-area-width="800" drag-area-height="50">
+			<div class="talk-view-header" style="width: 798px; height: 50px;background-image: url('../img/bg_1.png')">
+				<h3 id="targetName" style="text-align: center">1639461</h3>
+				<input id="targetId" type="hidden" value="">
+				<input id="messageType" type="hidden" value="">
+			</div>
+			<div id="talk-view-show" class="talk-view-show" style="width: 798px; height:400px; border-top: 1px solid gainsboro; border-bottom: 1px solid gainsboro">
+
+			</div>
+			<div id="talk-view-edit" class="talk-view-edit" contenteditable="true" style=" height:90px; outline: none">
+			</div>
+			<div class="talk-view-edit-bar" style="border-top: 1px solid gainsboro">
+				<button id="message-send">发送</button>
+			</div>
+		</div>
+	</body>
+	<script src="../js/shortui.js"></script>
+	<script type="text/javascript">
+		$(function () {
+			$("#my-friends").css("color","black");
+			$("#main-friends").css("display","block");
+			$("#my-groups").css("color","gray");
+			$("#main-groups").css("display","none");
+		})
+		$("#my-friends").click(function () {
+			$("#my-friends").css("color","black");
+			$("#main-friends").css("display","block");
+			$("#my-groups").css("color","gray");
+			$("#main-groups").css("display","none");
+		})
+
+		$("#my-groups").click(function () {
+			$(this).css("color","black");
+			$("#main-groups").css("display","block");
+			$("#my-friends").css("color","gray");
+			$("#main-friends").css("display","none");
+		})
+
+		function showView(type, target) {
+			$("#talk-view").css("display", "block");
+			$("#targetId").val(target);
+			$("#messageType").val(type);
+			$("#targetName").text($("#" + target).text());
+		}
+
+		$("#message-send").click(function () {
+			var targetId = $("#targetId").val();
+			var messageType = $("#messageType").val();
+			var message = $("#talk-view-edit").text();
+			$("#talk-view-edit").text("");
+			var myNickName = $("#my-nickname").text();
+			setShowView("send", myNickName, message);
+			//调用发送方法
+		})
+
+		function setShowView(type, nickName, msg) {
+			var showView = $("#talk-view-show");
+			if (type === "send"){
+				showView.append("<div style='clear: both;float: left;margin-left: 5px;'><b style='font-size: 10px'>"+nickName+": </b><br/><span style='margin-left: 10px'>"+msg+"</span></div>");
+			}else if (type === 'receive'){
+				showView.append("<div style='clear: both;float: right;margin-right: 5px;'><b style='font-size: 10px'>"+nickName+": </b><br/><span style='margin-left: 10px'>"+msg+"</span></div>");
+			}
+		}
+	</script>
+</html>

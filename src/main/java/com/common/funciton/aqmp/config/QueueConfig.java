@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class QueueConfig {
-
+    public static final String QUEUE_WORK = "queueWork";
     public static final String QUEUE_1 = "queue1";
     public static final String QUEUE_2 = "queue2";
 
@@ -20,6 +20,19 @@ public class QueueConfig {
     public static final String EXCHANGE_FANOUT = "fanoutExchange";
     public static final String EXCHANGE_TOPIC = "topicExchange";
     public static final String EXCHANGE_HEADERS = "headersExchange";
+
+    @Bean(name = "queueWork")
+    public Queue queueWork(){
+        /**
+         * work模式测试队列：
+         * name: 队列名称
+         * durable: 持久化
+         * exclusive：是否排外（只允许当前连接访问，当前连接断开后排外队列自动清除）
+         * autoDelete：是否自动清除（在最后一个连接断开的时候, 服务停止）
+         * arguments：设置队列参数达到不同效果，例如延迟队列
+         */
+        return new Queue("queueWork", true, false, false, null);
+    }
 
     @Bean(name = "queue1")
     public Queue queue1(){

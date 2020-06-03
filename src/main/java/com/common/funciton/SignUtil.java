@@ -9,10 +9,13 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Description: 本类为签名类，均为静态方法，包含MD5 BASE64 ....
@@ -25,6 +28,10 @@ public class SignUtil {
         System.out.println(s);
         String s1 = AESDncode("WQ", "LtA/f0IPNH7bowe9EzUh3g==");
         System.out.println(s1);
+
+        byte[] bytes = obj2Byte(s1);
+        Object o = byte2Obj(bytes);
+        System.out.println(o);
     }
     /**
      * MD5签名，签名结果不可逆转
@@ -200,4 +207,65 @@ public class SignUtil {
         return buffer.toString();
     }
 
+
+    /**
+     * 把对象转变成二进制
+     * @param obj 待转换的对象
+     * @return 返回二进制数组
+     */
+    public static byte[] obj2Byte(Object obj) {
+        ByteArrayOutputStream bos = null;
+        ObjectOutputStream oos = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(bos);
+            //读取对象并转换成二进制数据
+            oos.writeObject(obj);
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(oos != null) {
+                    oos.close();
+                }
+                if(bos != null) {
+                    bos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 把二进制数组的数据转回对象
+     * @param b
+     * @return
+     */
+    public static Object byte2Obj(byte[] b) {
+        ByteArrayInputStream bis = null;
+        ObjectInputStream ois = null;
+        try {
+            //读取二进制数据并转换成对象
+            bis = new ByteArrayInputStream(b);
+            ois = new ObjectInputStream(bis);
+            return ois.readObject();
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(ois != null) {
+                    ois.close();
+                }
+                if(bis != null) {
+                    bis.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 }

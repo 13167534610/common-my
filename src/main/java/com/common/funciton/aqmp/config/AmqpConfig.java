@@ -22,8 +22,8 @@ public class AmqpConfig {
     private static final String USER_NAME = "wangqiang"; //账户
     private static final String PASSWORD = "123456"; //密码
     private static final String VIRTUAL_HOST = "/mytest"; //操作目录
-    @Bean(value = "connectionFactory")
-    public ConnectionFactory connectionFactory(){
+    @Bean(value = "myConnectionFactory")
+    public ConnectionFactory myConnectionFactory(){
         CachingConnectionFactory factory = new CachingConnectionFactory();
         factory.setAddresses(RABBIT_MQ_ADDRESS);
         factory.setUsername(USER_NAME);
@@ -31,12 +31,14 @@ public class AmqpConfig {
         factory.setVirtualHost(VIRTUAL_HOST);
         factory.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.CORRELATED);//确认回调
         factory.setPublisherReturns(true);
+        factory.setChannelCacheSize(20);
+        factory.setChannelCheckoutTimeout(10000);
         return factory;
     }
 
-    @Bean("rabbitTemplate")
-    public RabbitTemplate rabbitTemplate(@Qualifier("connectionFactory") ConnectionFactory connectionFactory) throws IOException, TimeoutException {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+    @Bean("myRabbitTemplate")
+    public RabbitTemplate myRabbitTemplate(@Qualifier("myConnectionFactory") ConnectionFactory myConnectionFactory) throws IOException, TimeoutException {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(myConnectionFactory);
         //使用单独的发送连接，避免生产者由于各种原因阻塞而导致消费者同样阻塞
         rabbitTemplate.setUsePublisherConnection(true);
         //实现消息发送到RabbitMQ交换器的回调确认，到达交换器ack=true否则ack=false
@@ -49,9 +51,9 @@ public class AmqpConfig {
         return rabbitTemplate;
     }
 
-    @Bean("rabbitAdmin")
-    public RabbitAdmin rabbitAdmin(@Qualifier("connectionFactory") ConnectionFactory connectionFactory){
-        RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
+    @Bean("myRabbitAdmin")
+    public RabbitAdmin myRabbitAdmin(@Qualifier("myConnectionFactory") ConnectionFactory myConnectionFactory){
+        RabbitAdmin rabbitAdmin = new RabbitAdmin(myConnectionFactory);
         return rabbitAdmin;
     }
 }
