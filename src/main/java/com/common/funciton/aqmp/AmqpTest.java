@@ -42,11 +42,11 @@ public class AmqpTest {
         System.out.println("=====================================测试Work==========================================");
         HashMap<String, String> map = new HashMap<>();
         String msg = "RabbitMQ: work模式测试";
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             Thread.sleep(2000);
             logger.info(msg + i);
             map.put("msg", msg + i);
-            rabbitTemplateProvider.sendMsg(myRabbitTemplate,"", QueueConfig.QUEUE_WORK, map);
+            rabbitTemplateProvider.sendMsg(rabbitTemplate,"", QueueConfig.QUEUE_WORK, map);
         }
 
     }
@@ -70,5 +70,14 @@ public class AmqpTest {
         HashMap<String, String> map = new HashMap<>();
         map.put("msg", msg);
         rabbitTemplateProvider.sendMsg(myRabbitTemplate,QueueConfig.EXCHANGE_FANOUT, "", map);
+    }
+
+    @Test
+    public void testTopic(){
+        System.out.println("=====================================测试Topic==========================================");
+        String msg = "RabbitMQ: Topic交换器 队列测试";
+        HashMap<String, String> map = new HashMap<>();
+        map.put("msg", msg);
+        rabbitTemplateProvider.sendMsg(rabbitTemplate,QueueConfig.EXCHANGE_TOPIC, "topic.*", map);
     }
 }

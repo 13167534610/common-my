@@ -132,6 +132,8 @@ public class QueueConfig {
     }
 
 
+
+
     @Bean(name = "fanoutBindQueue1")
     public Binding fanoutBindQueue1(@Qualifier("queue1") Queue queue1, @Qualifier("fanoutExchange") FanoutExchange fanoutExchange){
         return BindingBuilder.bind(queue1).to(fanoutExchange);
@@ -139,5 +141,17 @@ public class QueueConfig {
     @Bean(name = "fanoutBindQueue2")
     public Binding fanoutBindQueue2(@Qualifier("queue2") Queue queue2, @Qualifier("fanoutExchange") FanoutExchange fanoutExchange){
         return BindingBuilder.bind(queue2).to(fanoutExchange);
+    }
+
+
+
+
+    @Bean(name = "topicBindQueue1")
+    public Binding fanoutBindQueue1(@Qualifier("queue1") Queue queue1, @Qualifier("fanoutExchange") TopicExchange topicExchange){
+        return BindingBuilder.bind(queue1).to(topicExchange).with("topic.queue1");
+    }
+    @Bean(name = "topicBindQueue2")
+    public Binding fanoutBindQueue2(@Qualifier("queue2") Queue queue2, @Qualifier("fanoutExchange") TopicExchange topicExchange){
+        return BindingBuilder.bind(queue2).to(topicExchange).with("topic.queue2");
     }
 }

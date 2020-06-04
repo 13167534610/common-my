@@ -55,6 +55,21 @@ RabbitMq消息模式的核心思想是：一个生产者并不会直接往一个
         //交换机名称（默认）， 路由key（队列名），消息属性，消息
         channel.basicPublish("","test",null,"你好".getBytes());
 
+    1.2.3springboot
+        spring:
+          rabbitmq:
+            host: 127.0.0.1
+            port: 5672
+            username: wangqiang
+            password: 123456
+            publisher-confirm-type: correlated #发送确认
+            template:
+              mandatory: true #发送失败触发回调
+            publisher-returns: true #发送回调
+            listener:
+              simple:
+                acknowledge-mode: manual #手动确认
+
 1.3连接接收
     1.3.1声明式
     /**
@@ -96,8 +111,7 @@ RabbitMq消息模式的核心思想是：一个生产者并不会直接往一个
 2.交换器类型
 2.1 直连交换器（DIRECT）： 队列需指定routKey绑定，交换器发送消息需根据具体的routKey才能找到队列，队列只允许一个消费者监听
 2.2 扇形交换器（FANOUT）:  队列不需指定routKey绑定，只需要使用""简单将队列绑定到交换器上，交换器会发送消息到绑定的所有队列,每个队列只允许一个消费者监听
-2.3 话题交换器（TOPIC） :  将路由键和某模式进行匹配。此时队列需要绑定要一个模式上。交换器会发送消息到指定模式绑定的所有队列
-       符号“#”匹配一个或多个词，符号“*”匹配一个词。因此“audit.#”能够匹配到“audit.irs.corporate”，但是“audit.*” 只匹配到“audit.irs”
+2.3 话题交换器（TOPIC） :  生产者发送消息到交换器，消费者模糊匹配路由进行消费，routKey必须用.隔开，#匹配一个活多个词，*匹配一个词
 2.队列模式
 2.1简单模式：单发送，单接收
 2.2work模式：单发送，多接收；

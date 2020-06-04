@@ -1,5 +1,7 @@
 package com.common.funciton.aqmp.config;
 
+import com.common.funciton.ItvJsonUtil;
+import com.common.funciton.SignUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -56,7 +58,7 @@ public class RabbitTemplateConfirmAndReturn implements RabbitTemplate.ConfirmCal
      */
     @Override
     public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
-        String msg = new String(message.getBody());
+        String msg = ItvJsonUtil.toJson(SignUtil.byte2Obj(message.getBody()));
         logger.error("到队列消息主体：" + msg);
         logger.error("到队列消息返回码：" + replyCode);
         logger.error("到队列错误描述：" + replyText);
